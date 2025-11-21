@@ -4,6 +4,8 @@ import pandas as pd
 
 # =======================================================
 # Função de log simples e objetiva
+# Objetivo: definição de uma função log global para que todas as outras funções possam utilizar
+# É passado um print formatado com o [OK] e uma {msg} -> correspondente a cada mensagem que for passada na frente 
 # =======================================================
 def log(msg):
     print(f"[OK] {msg}")
@@ -11,6 +13,13 @@ def log(msg):
 
 # =======================================================
 # Identificação do esquema original (antes da limpeza)
+# Objetivo: essa função tem o objetivo de identificar o esquema original através do dataframe criado 
+# Com um print formatado ela passa o total de colunas retornando a leitura das colunas do df (dataframe)
+# Após isso é feito um for para iterar por todas as colunas antes da limpeza e retornar o nome de todas elas antes da limpeza separada por um "-"
+# baseado no df (dataFrame feito) passando columns como paramêtro a ser atingido.
+# depois, é feito o print de cada tipo de dado para cada coluna através do df.dtypes que retorna o tipo que aquela coluna tá guardando
+# Por fim, vamos demonstrar os campos nulos por coluna antes da limpeza através do df.null que faz o papel de dizer se tá nulo e através do .sum
+# dizer a quantidade exata dos nulos.
 # =======================================================
 def identificar_esquema_original(df):
     print("\n=== ESQUEMA ORIGINAL (ANTES DA LIMPEZA) ===")
@@ -28,6 +37,13 @@ def identificar_esquema_original(df):
 
 # =======================================================
 # Identificação do esquema final (após limpeza)
+# Objetivo: essa função tem o objetivo de identificar o esquema final através do dataframe criado 
+# Com um print formatado ela passa o total de colunas retornando a leitura das colunas do df (dataframe)
+# Após isso é feito um for para iterar por todas as colunas antes da limpeza e retornar o nome de todas elas após a limpeza separada por um "-"
+# baseado no df (dataFrame feito) passando columns como paramêtro a ser atingido.
+# depois, é feito o print de cada tipo de dado para cada coluna através do df.dtypes que retorna o tipo que aquela coluna tá guardando
+# Por fim, vamos demonstrar os campos nulos por coluna antes da limpeza através do df.null que faz o papel de dizer se tá nulo e através do .sum
+# dizer a quantidade exata dos nulos.
 # =======================================================
 def identificar_esquema_final(df):
     print("\n=== ESQUEMA FINAL (APÓS A LIMPEZA) ===")
@@ -45,6 +61,10 @@ def identificar_esquema_final(df):
 
 # =======================================================
 # Limpeza de datas
+# Objetivo: essa função tem como objetivo tratar as datas que no esquema original estão inconsistentes e com ypos errados
+# primeiramente é passado as colunas necessárias que contem necessidade de tratar as datas 
+# depois é feito um for iterando pelas colunas e se se a coluna estiver no dataframe é reconstruído a coluna convertendo
+# para datetime no formato day first que é utilizado para forçar o formato original ano-mes-dia
 # =======================================================
 def tratar_datas(df):
     datas = [
@@ -217,6 +237,11 @@ def limpar_dataframe(df):
 
 # =======================================================
 # Execução principal
+# Objetivo: variavel df = trás a função para ler o csv e depois mostra na tela assim que ele for lido 
+# depois disso é passado para df a função inditificar esquema original e depois o dataframe é manipulado e tratado com todas as funções
+# pela a função limpar_dataframe, após isso com a função indentificar esquema final através do df é gerado o esquema final 
+# por sua vez ao fim do código utilizasse a conversão de tipos da biblioteca pandas onde ela converte o df do esquema final em xlsx para ser exportado em excel 
+# esse excel é salvo na mesma hora na mesma pasta local tratado.
 # =======================================================
 df = ler_csv_df()
 log("CSV carregado.")
