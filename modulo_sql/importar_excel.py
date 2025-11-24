@@ -3,13 +3,15 @@ import mysql.connector
 import numpy as np
 import unidecode
 
-
 arquivo = 'salas_df_normal.xlsx'
 
 def normalize(value):
     if pd.isna(value):
         return None
     return unidecode.unidecode(str(value)).upper().strip()
+
+def valor_mysql(x):
+    return None if pd.isna(x) else x
 
 tabela_exibidor = pd.read_excel(arquivo, usecols= ['NOME_EXIBIDOR', 'REGISTRO_EXIBIDOR', 'CNPJ_EXIBIDOR', 'SITUACAO_EXIBIDOR', 'NOME_GRUPO_EXIBIDOR', 'OPERACAO_USUAL'])
 tabela_endereco = pd.read_excel(arquivo, usecols=['NUMERO_ENDERECO_COMPLEXO', 'COMPLEMENTO_COMPLEXO', 'BAIRRO_COMPLEXO', 'MUNICIPIO_COMPLEXO', 'CEP_COMPLEXO', 'UF_COMPLEXO', 'ENDERECO_COMPLEXO', 'NUMERO', 'LOGRADOURO', 'RESTO'])
@@ -26,22 +28,18 @@ tabela_complexo = pd.read_excel(arquivo, usecols=[
 ])
 tabela_sala = pd.read_excel(arquivo, usecols=['NOME_SALA', 'REGISTRO_SALA','CNPJ_SALA','SITUACAO_SALA', 'DATA_SITUACAO_SALA', 'DATA_INICIO_FUNCIONAMENTO_SALA', 'ASSENTOS_SALA', 'ASSENTOS_CADEIRANTES', 'ASSENTOS_MOBILIDADE_REDUZIDA','ASSENTOS_OBESIDADE', 'ACESSO_ASSENTOS_COM_RAMPA', 'ACESSO_SALA_COM_RAMPA', 'BANHEIROS_ACESSIVEIS', 'REGISTRO_COMPLEXO'])
 
-
-
 df = pd.read_excel(arquivo)
 
 conexao = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="SUA SENHA",
+        password="Noah",
         database="salas_ancine"
 )
 
 cursor = conexao.cursor()
 
-
 sql = 'INSERT INTO exibidor (nome_exibidor, registro_exibidor, cnpj_exibidor, situacao_exibidor, nome_grupo_exibidor, operacao_usual) VALUES (%s, %s, %s, %s, %s, %s)'
-
 
 for _, row in tabela_exibidor.iterrows():
     cursor.execute(sql, (
@@ -74,12 +72,7 @@ for _, row in tabela_endereco.iterrows():
 cursor.execute("SELECT id_endereco, endereco_complexo, numero_endereco_complexo FROM endereco")
 endereco_map = {(endereco_complexo, numero): id_endereco for id_endereco, endereco_complexo, numero in cursor.fetchall()}
 
-
-
 sql = 'INSERT INTO complexo(id_exibidor, id_endereco, nome_complexo, complexo_itinerante, situacao_complexo, data_situacao_complexo, registro_complexo, pagina_eletronica_complexo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-
-def valor_mysql(x):
-    return None if pd.isna(x) else x
 
 for _, row in tabela_complexo.iterrows():
     reg_exib = str(row['REGISTRO_EXIBIDOR']).strip()       # converte para string
@@ -104,9 +97,7 @@ complexo_map = {
 }
 
 
-
-
-sql = 'INSERT INTO sala(id_complexo, registro_sala, cnpj_sala, situacao_sala,data_situacao_sala, data_inicio_funcionamento_sala, assentos_sala, assentos_cadeirantes, assentos_mobilidade_reduzida, assentos_obesidade, acesso_assentos_com_rampa, acesso_sala_com_rampa, banheiros_acessiveis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+sql = 'INSERT INTO sala(id_complexo, nome_sala, registro_sala, cnpj_sala, situacao_sala,data_situacao_sala, data_inicio_funcionamento_sala, assentos_sala, assentos_cadeirantes, assentos_mobilidade_reduzida, assentos_obesidade, acesso_assentos_com_rampa, acesso_sala_com_rampa, banheiros_acessiveis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
 for _, row in df.iterrows():
 
     reg_complexo_norm = normalize(row.get('REGISTRO_COMPLEXO'))
@@ -118,6 +109,7 @@ for _, row in df.iterrows():
 
     cursor.execute(sql, (
         id_complexo,
+        valor_mysql(row.get('NOME_SALA')),
         valor_mysql(row.get('REGISTRO_SALA')),
         valor_mysql(row.get('CNPJ_SALA')),
         valor_mysql(row.get('SITUACAO_SALA')),
@@ -131,6 +123,7 @@ for _, row in df.iterrows():
         valor_mysql(row.get('ACESSO_SALA_COM_RAMPA')),
         valor_mysql(row.get('BANHEIROS_ACESSIVEIS'))
     ))
+
 conexao.commit()
 cursor.close()
 conexao.close()

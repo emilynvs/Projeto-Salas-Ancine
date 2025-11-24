@@ -1,24 +1,3 @@
-Nulos por coluna (APÓS A LIMPEZA):
-NOME_SALA                          0
-REGISTRO_SALA                      0
-CNPJ_SALA                          0
-SITUACAO_SALA                      0
-DATA_SITUACAO_SALA                36
-DATA_INICIO_FUNCIONAMENTO_SALA    54
-ASSENTOS_SALA                      0
-ASSENTOS_CADEIRANTES               0
-ASSENTOS_MOBILIDADE_REDUZIDA       0
-ASSENTOS_OBESIDADE                 0
-ACESSO_ASSENTOS_COM_RAMPA          0
-ACESSO_SALA_COM_RAMPA              0
-BANHEIROS_ACESSIVEIS               0
-
-
-
-                    0 OK
-
-dtype: int64
-========================================
 
 
 create database salas_ancine;
@@ -67,6 +46,7 @@ create table sala(
     id_sala int AUTO_INCREMENT PRIMARY KEY,
     id_complexo int,
     FOREIGN KEY (id_complexo) REFERENCES complexo(id_complexo),
+    nome_sala VARCHAR(255),
     registro_sala int,
     cnpj_sala VARCHAR(255),
     situacao_sala VARCHAR(255),
