@@ -1,15 +1,11 @@
 import pandas as pd
 import os
 
-# =======================================================
-# Criar pasta de saída
-# =======================================================
+
 OUTPUT_DIR = "modulo_data"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# =======================================================
-# Carregar o dataframe limpo
-# =======================================================
+
 try:
     df_global = pd.read_excel("salas_df_normal.xlsx")
     print("[OK] DataFrame limpo carregado com sucesso!")
@@ -17,19 +13,11 @@ except Exception as erro:
     print("[ERRO] Falha ao carregar salas_df_normal.xlsx:", erro)
     df_global = None
 
-
-# =======================================================
-# Função auxiliar para salvar apenas XLSX
-# =======================================================
 def salvar(df, nome_base):
     path = f"{OUTPUT_DIR}/{nome_base}.xlsx"
     df.to_excel(path, index=False)
     print(f"[OK] Arquivo gerado e salvo em: {path}")
 
-
-# =======================================================
-# 1. ANALISAR ESTADOS
-# =======================================================
 def analiseEstados():
     global df_global
 
@@ -59,10 +47,6 @@ def analiseEstados():
     # SALVAR XLSX
     salvar(resumo.reset_index(), "analise_estados")
 
-
-# =======================================================
-# 2. PERCENTUAL DE ACESSIBILIDADE DAS SALAS
-# =======================================================
 def percentualSalaComacessibilidade():
     global df_global
 
@@ -97,10 +81,6 @@ def percentualSalaComacessibilidade():
     # SALVAR XLSX
     salvar(saida, "percentual_acessibilidade_salas")
 
-
-# =======================================================
-# 3. MELHORES CIDADES
-# =======================================================
 def melhoresCidades():
     global df_global
 
@@ -132,10 +112,6 @@ def melhoresCidades():
     # SALVAR XLSX
     salvar(ranking.reset_index(), "ranking_melhores_cidades")
 
-
-# =======================================================
-# MENU PRINCIPAL
-# =======================================================
 def menu():
     print("\n===== MENU DE OPÇÕES =====\n")
     print("1 - ANALISAR POR ESTADO")
@@ -159,8 +135,4 @@ def menu():
 
     print("SAINDO...")
 
-
-# =======================================================
-# EXECUÇÃO
-# =======================================================
 menu()
